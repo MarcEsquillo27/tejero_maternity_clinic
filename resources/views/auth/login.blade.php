@@ -31,6 +31,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Tejero Medical and Maternity Clinic</title>
 	<!-- PVC Template -->
+			
 	<script type="text/template" id="pvc-stats-view-template">
 	</script>
 
@@ -1328,7 +1329,7 @@
 		})(window.jQuery);
 	</script>
 	<div class="site" id="page">
-		<a class="skip-link screen-reader-text" href="http://localhost/clinic_system/medcert_form">Request</a>
+		<!-- <a id="dir_medcert" class="skip-link screen-reader-text" href="#">Request</a> -->
 		<div class="education-base-main-header-wrapper">
 			<div class="top-header left-curve">
 				<div class="container">
@@ -1336,7 +1337,7 @@
 						<div class="col-sm-6 text-left">
 						</div>
 						<div class="col-sm-6 text-right">
-							<a class="read-more" href="http://localhost/clinic_system/medcert_form">Request</a>
+							<a id="dir_medcert" class="read-more" href="#">Request</a>
 						</div>
 					</div>
 				</div>
@@ -1347,7 +1348,7 @@
 						<button type="button" class="navbar-toggle" data-toggle="collapse"
 							data-target=".navbar-collapse"><i class="fa fa-bars"></i></button>
 						<p class="site-title">
-							<a href="http://localhost/clinic_system/login" title="Tejero Medical and Maternity Clinic" rel="home">Tejero Medical
+						<a id="dir_home_logo" href="#" title="Tejero Medical and Maternity Clinic" rel="home">Tejero Medical
 								and Maternity Clinic</a>
 						</p>
 					</div>
@@ -1356,29 +1357,59 @@
 							<ul id="primary-menu" class="nav navbar-nav navbar-right acme-normal-page">
 								<li id="menu-item-880"
 									class="menu-item menu-item-type-custom menu-item-object-custom menu-item-880">
-									<a href="http://localhost/clinic_system/login">HOME</a>
+									<a id="dir_home" href="#">HOME</a>
 								</li>
 								<li id="menu-item-886"
 									class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-886">
-									<a href="http://localhost/clinic_system/about">ABOUT</a>
+									<a id="dir_about" href="#">ABOUT</a>
 									<ul class="sub-menu">
 										<li id="menu-item-889"
 											class="menu-item menu-item-type-custom menu-item-object-custom menu-item-889">
-											<a href="http://localhost/clinic_system/about#flowchat">FLOWCHAT</a>
+											<a id="dir_about" href="http://localhost/clinic_system/about#flowchat">FLOWCHAT</a>
 										</li>
 										<li id="menu-item-893"
 											class="menu-item menu-item-type-custom menu-item-object-customn menu-item-893">
-											<a href="http://localhost/clinic_system/about#mission">MISSION</a>
+											<a id="dir_about" href="http://localhost/clinic_system/about#mission">MISSION</a>
 										</li>
 										<li id="menu-item-897"
 											class="menu-item menu-item-type-custom menu-item-object-custom menu-item-897">
-											<a href="http://localhost/clinic_system/about#vision">VISION</a>
+											<a id="dir_about" href="http://localhost/clinic_system/about#vision">VISION</a>
 										</li>
 									</ul>
 								</li>
 								<li id="menu-item-880"
+
 								class="menu-item menu-item-type-custom menu-item-object-custom menu-item-880">
-								<a href="http://localhost/clinic_system/login2">LOGIN</a>
+								<a id="dir_login" href="#">LOGIN</a>
+								<script type="text/javascript">
+										
+										const dir_url = `${window.location.protocol}//${window.location.host}/clinic_system`
+									function returnLogin2(){
+										var a = document.getElementById("dir_login");//LOGIN
+										console.log(a,"37")
+										a.href = dir_url+'/login2'
+										console.log(a,"39")
+									}
+									
+									function returnHome(){
+										var a = document.getElementById("dir_home"); // HOME
+										var a_logo = document.getElementById("dir_home_logo"); // HOME
+										a.href = dir_url+'/login'
+										a_logo.href = dir_url+'/login'
+									}
+									function returnAbout(){
+										var a = document.getElementById("dir_about"); //ABOUR
+										a.href = dir_url+'/about'
+									}
+									function returnMedCert(){
+										var a = document.getElementById("dir_medcert"); //MEDCERT
+										a.href = dir_url+'/medcert_form'
+									}
+									returnMedCert()
+									returnAbout()
+									returnLogin2()
+									returnHome()
+								</script>
 							</li>
 							</ul>
 						</div>
