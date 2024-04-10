@@ -136,10 +136,12 @@ class RoomController extends Controller
         try {
             // Extract data from the request
             $id = $request->id;
-            $new_status = "yes";
+            $new_status = $request->vacant;
     
             // Execute the raw SQL update query
-            DB::update('UPDATE beds SET vacant = "yes" WHERE id = '.$id);
+            DB::table('beds')
+    ->where('id', $id)
+    ->update(['vacant' => $new_status]);
     
             // Optionally, return a response
             return response()->json(['message' => 'Bed status updated successfully']);

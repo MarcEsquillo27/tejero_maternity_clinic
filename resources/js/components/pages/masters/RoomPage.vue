@@ -11,37 +11,24 @@
 
             </v-col>
         </v-row>
-        <v-simple-table dense :height="tableHeight">
-            <thead>
-                <tr>
-                    <th  class="text-left" style="width:20px">ID</th> 
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Bed No.</th>
-                    <th  class="text-left" style="width:20px">ACTION</th> 
-                </tr>
-            </thead>
-            <tbody v-if="roomDataSearch.length">
-
-                <tr v-for="(room,index) in roomDataSearch" :key="index">
-                    <td >{{room.id}}</td>
-                    <td>{{selectRoomType[room.room_type - 1].name}}</td>
-                    <td>{{room.name}}</td>
-                    <!-- <td>{{room.name}}</td> -->
-                    <td>{{room.beds.length}}</td>
-                    <td>
-                        <v-icon color="warning" @click="View(room)">mdi-eye</v-icon>
-                        <v-icon color="success" @click="Edit(room)">mdi-pencil</v-icon>
-                        <v-icon color="error" @click="toggleDelete(room.id)">mdi-delete</v-icon>
-                    </td>
-                </tr>
-            </tbody>
-             <tbody v-else>
-                <tr>
-                   <td style="color:red; text-align:center;" colspan="5">NO DATA FOUND</td>
-                </tr>
-            </tbody>
-        </v-simple-table>
+        <v-data-table
+            :headers="headers"
+            :items="roomData"
+            :search="search"
+            :items-per-page="10"
+            class="elevation-1"
+        >
+        <template v-slot:item.room_type="{ item }">
+    <td>
+      {{ item.room_type === 1 ? 'Private' : 'Ward'}}
+    </td>
+  </template>
+            <template v-slot:item.action="{ item }">
+                <v-icon color="warning" @click="View(item)">mdi-eye</v-icon>
+                <v-icon color="success" @click="Edit(item)">mdi-pencil</v-icon>
+                <v-icon color="error" @click="toggleDelete(item.id)">mdi-delete</v-icon>
+            </template>
+        </v-data-table>
         <insert-dialog 
             :room="tempRoom" 
             :dialog="insertDialog" 
@@ -143,7 +130,13 @@ export default {
                 beds:[]
             },
             tempEditRoom:{},
-
+            headers: [
+                { text: 'ID', align: 'start', sortable: true, value: 'id' },
+                { text: 'Type', value: 'room_type' },
+                { text: 'Name', value: 'name' },
+                { text: 'Bed No.', value: 'beds.length' },
+                { text: 'Action', value: 'action', sortable: false },
+            ],
 
         }
     },
@@ -276,15 +269,15 @@ export default {
         },
     },
     computed:{
-         roomDataSearch() {
-      const newSearch = this.search.toLowerCase();
-      return this.roomData.filter(item => {
-        return (
-          item.name.toLowerCase().includes(newSearch)
-          // Add more fields to search if needed
-        );
-      });
-    },
+    //      roomDataSearch() {
+    //   const newSearch = this.search.toLowerCase();
+    //   return this.roomData.filter(item => {
+    //     return (
+    //       item.name.toLowerCase().includes(newSearch)
+    //       // Add more fields to search if needed
+    //     );
+    //   });
+    // },
         ...mapState([
             'rules',
             'roomData',

@@ -12,33 +12,18 @@
             </v-col>
         </v-row>
 
-        <v-simple-table dense :height="tableHeight">
-            <thead>
-                <tr>
-                    <th class="text-left" style="width:20px">ID</th> 
-                    <th>Name</th>
-                    <th>Position</th>
-                    <th class="text-left" style="width:20px">Action</th> 
-                </tr>
-            </thead>    
-            <tbody v-if="searchDoctor.length">
-                <tr v-for="(doctor,index) in searchDoctor" :key="index">
-                    
-                    <td>{{doctor.id}}</td>
-                    <td>{{doctor.name}}</td>
-                    <td>{{doctor.position}}</td>
-                    <td>
-                        <v-icon color="success" @click="Edit(doctor)">mdi-pencil</v-icon>
-                        <v-icon color="error" @click="toggleDelete(doctor.id)">mdi-delete</v-icon>
-                    </td>
-                </tr>
-            </tbody>
-             <tbody v-else>
-                <tr>
-                   <td style="color:red; text-align:center;" colspan="4">NO DATA FOUND</td>
-                </tr>
-            </tbody>
-        </v-simple-table>
+        <v-data-table
+      :headers="headers"
+      :items="doctorData"
+      :search="search"
+      :items-per-page="5"
+      class="elevation-1"
+    >
+      <template v-slot:item.action="{ item }">
+        <v-icon color="success" @click="Edit(item)">mdi-pencil</v-icon>
+        <v-icon color="error" @click="toggleDelete(item.id)">mdi-delete</v-icon>
+      </template>
+    </v-data-table>
         <v-dialog v-model="insertDialog" persistent max-width="400">
             <v-form  id="Insert" ref="Insert" @submit.prevent="Insert" enctype="multipart/form-data">
                 <v-card>
@@ -198,7 +183,12 @@ export default {
             tempId:null,
             position:null,
             dialogBtn:false,
-
+            headers: [
+        { text: "ID", align: "start", sortable: false, value: "id" },
+        { text: "Name", value: "name" },
+        { text: "Position", value: "position" },
+        { text: "Action", value: "action", sortable: false },
+      ],
 
         }
     },
@@ -326,15 +316,15 @@ export default {
         },
     },
     computed:{
-        searchDoctor() {
-      const newSearch = this.search.toLowerCase();
-      return this.doctorData.filter(item => {
-        return (
-          item.name.toLowerCase().includes(newSearch)
-          // Add more fields to search if needed
-        );
-      });
-    },
+    //     searchDoctor() {
+    //   const newSearch = this.search.toLowerCase();
+    //   return this.doctorData.filter(item => {
+    //     return (
+    //       item.name.toLowerCase().includes(newSearch)
+    //       // Add more fields to search if needed
+    //     );
+    //   });
+    // },
         ...mapState([
             'rules',
             'doctorData',

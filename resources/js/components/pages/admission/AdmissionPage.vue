@@ -11,39 +11,21 @@
                 >
             </v-col>
         </v-row>
-        <v-simple-table dense :height="tableHeight">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Case No</th>
-                    <th>Patient</th>
-                    <th>Doctor</th>
-                    <th>Room</th>
-                    <th>Bed</th>
-                    <th>Relationship</th>
-                    <th>Guardian</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody v-if="caseDataSearch.length">
-                <tr v-for="(data, index) in caseDataSearch" :key="index">
-                    <td>{{ data.id }}</td>
-                    <td>{{ data.case_no }}</td>
-                    <td>{{ data.patient_name }}</td>
-                    <td>{{ data.doctor_name }}</td>
-                    <td>{{ data.room_name }}</td>
-                    <td>{{ data.bed_name }}</td>
-                    <td>{{ data.relationship }}</td>
-                    <td>{{ data.husband_name }}</td>
-                    <td>
-                        <v-icon color="success" @click="Edit(data)"
-                            >mdi-pencil</v-icon
-                        >
-                        <v-tooltip bottom>
+        <v-data-table
+            :headers="headers"
+            :items="admmisionData"
+            :search="search"
+            :items-per-page="10"
+            class="elevation-1"
+        >
+          
+            <template v-slot:item.action="{ item }">
+                <v-icon @click="Edit(item)">mdi-pencil</v-icon>
+                <v-tooltip bottom>
                             <template v-slot:activator="{ on }">
                                 <v-icon
                                     color="error"
-                                    @click="toggleDelete(data.id)"
+                                    @click="toggleDelete(item.id,item)"
                                     v-on="on"
                                     >mdi-bed-empty</v-icon
                                 >
@@ -51,17 +33,8 @@
                             <span>Discharge Patient</span>
                             <!-- Tooltip content -->
                         </v-tooltip>
-                    </td>
-                </tr>
-            </tbody>
-            <tbody v-else>
-                <tr>
-                    <td style="color: red; text-align: center" colspan="9">
-                        NO DATA FOUND
-                    </td>
-                </tr>
-            </tbody>
-        </v-simple-table>
+            </template>
+        </v-data-table>
         <insert-dialog
             :data="tempData"
             :dialog="insertDialog"
@@ -128,8 +101,8 @@ export default {
 
             agree: {
                 dialog: false,
-                title: "Delete",
-                text: "Are you sure you want to delete",
+                title: "Patient Discharge",
+                text: "Are you sure you want to discharge?",
             },
             snackbar: {
                 show: false,
@@ -154,9 +127,9 @@ export default {
             tempName: null,
             tempId: null,
             dialogBtn: false,
-
+            bed_id:null,
             tempData: {
-                case_no: null,
+                // case_no: moment().format("YYYY")+"-"+Math.floor(Math.random() * 1000).toString().padStart(3, '0')+'-'+Math.floor(Math.random() * 10000).toString().padStart(4, '0'),
                 patient_id: null,
                 doctor_id: null,
                 room_id: null,
@@ -164,6 +137,17 @@ export default {
                 bed_id: null,
             },
             tempEditData: {},
+            headers: [
+                { text: "ID", value: "id" },
+                { text: "Case No", value: "case_no" },
+                { text: "Patient", value: "patient_name" },
+                { text: "Doctor", value: "doctor_name" },
+                { text: "Room", value: "room_name" },
+                { text: "Bed", value: "bed_name" },
+                { text: "Relationship", value: "relationship" },
+                { text: "Guardian", value: "husband_name" },
+                { text: "Action", value: "action", sortable: false },
+            ],
         };
     },
     methods: {
@@ -185,7 +169,8 @@ export default {
             }),
                 (this.editMode = !this.editMode);
         },
-        toggleDelete(id) {
+        toggleDelete(id,val) {
+            this.bed_id = val.bed_id
             this.tempId = id;
             this.agree.dialog = true;
         },
@@ -196,9 +181,6 @@ export default {
         },
         Insert() {
             this.loadMore = true;
-            this.tempData.case_no = `${moment().format("YYYY")}-${
-                this.tempData.case_no
-            }`;
             axios({
                 method: "post",
                 url: "case_insert",
@@ -213,7 +195,7 @@ export default {
                         axios({
                             method: "post",
                             url: "update_bed",
-                            data: { id: this.tempData.bed_name },
+                            data: { id: this.tempData.bed_name, vacant:"yes" },
                         });
                         // this.$refs.Insert.resetValidation()
                         this.getAdmision();
@@ -223,7 +205,7 @@ export default {
                             name: this.loggedInUser.name,
                             position: this.loggedInUser.access,
                             drawerLink: "Admission",
-                            date: moment().format("YYYY-MM-DD"),
+                            date: moment().format("YYYY-MM-DD hh:mm:ss"),
                         };
                         auditRecord.Insert(audit);
                         this.insertDialog = false;
@@ -277,12 +259,17 @@ export default {
                 .then((res) => {
                     this.getAdmision();
                     this.snackbar.show = true;
-                    this.snackbar.text = "Success Delete";
+                    this.snackbar.text = "Success";
                     this.snackbar.color = "success";
                     this.closeAgree();
+                    axios({
+                            method: "post",
+                            url: "update_bed",
+                            data: { id: this.bed_id, vacant:"no"},
+                        });
                     let audit = {
-                        action: "Delete Patient",
-                        description: "Patient Info Deleted",
+                        action: "Discharge Patient",
+                        description: "Patient Discharged",
                         name: this.loggedInUser.name,
                         position: this.loggedInUser.access,
                         drawerLink: "Admission",
@@ -296,25 +283,25 @@ export default {
         },
     },
     computed: {
-        caseDataSearch() {
-            const newSearch = this.search.toLowerCase();
-            return this.admmisionData.filter((item) => {
-                if (item.deleted_at) {
-                    // Exclude the item if deleted_at is not null
-                    return false;
-                }
-                return (
-                    item.case_no.toLowerCase().includes(newSearch) ||
-                    item.patient_name.toLowerCase().includes(newSearch) ||
-                    item.doctor_name.toLowerCase().includes(newSearch) ||
-                    item.room_name.toLowerCase().includes(newSearch) ||
-                    item.bed_name.toLowerCase().includes(newSearch) ||
-                    item.relationship.toLowerCase().includes(newSearch) ||
-                    item.husband_name.toLowerCase().includes(newSearch)
-                    // Add more fields to search if needed
-                );
-            });
-        },
+        // caseDataSearch() {
+        //     const newSearch = this.search.toLowerCase();
+        //     return this.admmisionData.filter((item) => {
+        //         if (item.deleted_at) {
+        //             // Exclude the item if deleted_at is not null
+        //             return false;
+        //         }
+        //         return (
+        //             item.case_no.toLowerCase().includes(newSearch) ||
+        //             item.patient_name.toLowerCase().includes(newSearch) ||
+        //             item.doctor_name.toLowerCase().includes(newSearch) ||
+        //             item.room_name.toLowerCase().includes(newSearch) ||
+        //             item.bed_name.toLowerCase().includes(newSearch) ||
+        //             item.relationship.toLowerCase().includes(newSearch) ||
+        //             item.husband_name.toLowerCase().includes(newSearch)
+        //             // Add more fields to search if needed
+        //         );
+        //     });
+        // },
         ...mapState([
             "rules",
             "admmisionData",
@@ -326,6 +313,7 @@ export default {
 
     mounted() {
         this.getAdmision();
+        this.tempData.case_no = moment().format("YYYY")+"-"+Math.floor(Math.random() * 1000).toString().padStart(3, '0')+'-'+Math.floor(Math.random() * 10000).toString().padStart(4, '0');
     },
 };
 </script>

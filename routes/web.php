@@ -40,6 +40,15 @@ Route::middleware('guest')->group(function () {
     Route::get('/',function(){
         return view('auth.login');
     });
+    Route::get('/about',function(){
+        return view('auth.about');
+    });
+    Route::get('/login2',function(){
+        return view('auth.index');
+    });
+    Route::get('/medcert_form',function(){
+        return view('auth.medcert');
+    });
     Route::get('/request_document',function(){
         return view('auth.login');
     });
@@ -69,6 +78,7 @@ Route::middleware(['auth'])->group(function() {
     Route::post('/register_update', [UserController::class, 'register_update']);
     Route::post('/register_delete', [UserController::class, 'register_delete']);
     Route::post('/getFiles',[UserController::class, 'getFiles']);
+    Route::post('/deleteFileDatabase',[UserController::class, 'deleteFileDatabase']);
 
     Route::get('/downloadFiles/{file}', [UserController::class, 'downloadFiles']);
 

@@ -31,7 +31,7 @@ public function audit(Request $request){
     try {
         $startDate = $request->start_date;
         $endDate = $request->end_date;
-        $query = "SELECT * FROM audit_models WHERE date BETWEEN '$startDate 00:00:00' AND '$endDate 23:59:59' ORDER BY date DESC";
+        $query = "SELECT * FROM audit_models WHERE created_at BETWEEN '$startDate 00:00:00' AND '$endDate 23:59:59' ORDER BY created_at DESC";
         $audit = \DB::select($query);
         return $audit;
     } catch (\Exception $e) {

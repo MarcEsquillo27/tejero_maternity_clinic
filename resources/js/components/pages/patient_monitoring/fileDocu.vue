@@ -40,6 +40,14 @@
                                     >
                                         Download <v-icon>mdi-download</v-icon>
                                     </v-btn>
+                                    <v-btn
+                                        small
+                                        color="error"
+                                        class="ml-2"
+                                        @click="deleteFile(item)"
+                                    >
+                                        <v-icon>mdi-delete</v-icon>
+                                        </v-btn>
                                 </td>
                             </tr>
                         </tbody>
@@ -173,6 +181,29 @@ export default {
             // console.log(val)
             window.open(`downloadFiles/${val}`, "_blank");
         },
+        deleteFile(val){
+            console.log(val)
+            
+                let confirmed = confirm("Are you sure you to delete?")
+
+                if(confirmed){
+                    axios({
+                method: "POST",
+                url: "deleteFileDatabase",
+                data:{id:val.id}
+            }).then(()=>{
+                this.snackbar.show = true;
+                            this.snackbar.text = "Success Delete";
+                            this.snackbar.color = "success";
+                            this.$store.dispatch("getFiles");
+                            this.attach_dialog = false;
+                            this.attachment = null;
+                            this.listOfAttachments = [];
+            })
+                    
+                }
+            
+        }
     },
     computed: {
         ...mapState(["case_Files", "case_no"]),

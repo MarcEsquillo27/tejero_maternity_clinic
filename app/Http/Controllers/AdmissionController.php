@@ -52,6 +52,7 @@ class AdmissionController extends Controller
         'admissions.doctor_id',
         'admissions.room_id',
         DB::raw('beds.name AS bed_name'),
+        DB::raw('beds.id AS bed_id'),
         'admissions.relationship',
         'admissions.husband_name',
         'patients.name as patient_name',

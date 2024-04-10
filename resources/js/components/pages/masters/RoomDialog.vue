@@ -59,9 +59,9 @@
                                         <template v-for="(bed,index) in room.beds">
                                             
                                             <v-col cols="6" :key="index">
-                                                <span>{{bed.vacant?"Occuppied":"Vacant"}}</span>
+                                                <span>{{bed.vacant=='yes'?"Occuppied":"Vacant"}}</span>
                                                 <v-text-field
-                                                    :readonly="bed.vacant?true:false"
+                                                    :readonly="bed.vacant=='yes'?true:false"
                                                     :label="'Bed Name ' + (index+1)"
                                                     v-model="bed.name"
                                                     class="required uppercase"
@@ -70,7 +70,7 @@
                                                     persistent-placeholder
                                                     outlined
                                                     name="name"
-                                                    prepend-icon="mdi-delete"
+                                                    :prepend-icon="bed.vacant == 'yes'?'':'mdi-delete'"
                                                     @click:prepend="removeBed(index)"
                                                 ></v-text-field>
                                             </v-col>

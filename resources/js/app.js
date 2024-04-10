@@ -6,6 +6,7 @@ import Router from './router';
 import store from './store';
 import App from './template/App';
 import Login from './template/LoginApp';
+import RequestDocument from './template/RequestDocument';
 import VueHtmlToPaper from "vue-html-to-paper";
 
 Vue.use(Vuetify);
@@ -25,7 +26,8 @@ new Vue({
     vuetify: new Vuetify(),
     components: {
         App,
-        Login
+        Login,
+        RequestDocument
     },
     mounted() {
         Vue.use(VueHtmlToPaper, options);

@@ -1,4 +1,5 @@
 <template>
+    <v-app>
     <v-container fluid fill-height>
         <v-row justify="center" align="center">
             <v-col cols="12" sm="8" md="6">
@@ -59,6 +60,7 @@
         </v-row>
         <snackbar :snackbar="snackbar" />
     </v-container>
+</v-app>
 </template>
 
 <script>

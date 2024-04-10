@@ -14,8 +14,7 @@
                                 <v-col cols="12">
                                     <v-text-field
                                         label="Case No"
-                                        v-model="data.case_no"
-                                        :prefix="yearNow"
+                                        v-model="caseNumber"
                                         class="required uppercase"
                                         dense
                                         :rules="rules.required"
@@ -75,7 +74,7 @@
                                         label="Bed"
                                         v-model="data.bed_name"
                                         :items="selectBed"
-                                        :item-text="(elem) => { return elem.vacant?'Occuppied':'Vacant'+' : '+elem.name}"
+                                        :item-text="(elem) => { return elem.vacant =='yes'?'Occuppied':'Vacant'+' : '+elem.name}"
                                         :item-value="(el)=>{return el.id}"
                                         class="required"
                                         dense
@@ -141,7 +140,9 @@ export default {
     data: () => ({
         snackbarTimeout:3000,
         dialogBtn:false,
-        yearNow:moment().format("YYYY")+"-"
+        caseNumber:moment().format("YYYY")+"-"+Math.floor(Math.random() * 1000).toString().padStart(3, '0')+'-'+Math.floor(Math.random() * 10000).toString().padStart(4, '0')
+        // console.log(this.data)
+        // yearNow:moment().format("YYYY")+"-"
     }),
     methods: {
         ...mapActions([
@@ -157,10 +158,12 @@ export default {
             this.$emit('closeDialog')
         },
         toggleSave(){
+            this.data.case_no = this.caseNumber
             if(this.$refs.Insert.validate()){
                 this.$emit('toggleSave')
             }
         },
+    
     },
     computed:{
         ...mapState([

@@ -14,6 +14,7 @@
                                 <v-col cols="12">
                                     <v-autocomplete
                                         readonly
+                                        disabled
                                         label="Room Type"
                                         v-model="room.room_type"
                                         :items="selectRoomType"
@@ -30,6 +31,7 @@
                                 <v-col cols="12">
                                     <v-text-field
                                     readonly
+                                    disabled
                                         label="Room Name"
                                         v-model="room.name"
                                         class="required uppercase"
@@ -49,6 +51,7 @@
                                                 <span>{{bed.vacant?"Occuppied":"Vacant"}}</span>
                                                 <v-text-field
                                                     readonly
+                                                    disabled
                                                     :label="'Bed Name ' + (index+1)"
                                                     v-model="bed.name"
                                                     class="required uppercase"
@@ -57,8 +60,6 @@
                                                     persistent-placeholder
                                                     outlined
                                                     name="name"
-                                                    prepend-icon="mdi-delete"
-                                                    @click:prepend="removeBed(index)"
                                                 ></v-text-field>
                                             </v-col>
                                         </template>

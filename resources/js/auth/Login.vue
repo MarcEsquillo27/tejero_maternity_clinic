@@ -4,7 +4,7 @@
             <v-container fluid>
                 <v-row align="center" justify="center">
                     <v-col cols="12" sm="10" md="8" lg="6" xl="4">
-                        <v-card class="mx-auto mt-5" elevation="5" width="1000">
+                        <v-card class="mx-auto mt-5" elevation="5" width="500">
                             <template slot="progress">
                                 <v-progress-linear
                                     color="black"
@@ -14,7 +14,7 @@
                             </template>
                             <v-card-title
                                 class="justify-center py-8"
-                                style="font-size: 2em; white-space: normal"
+                                style="font-size: 14; text-align:justify; white-space: normal"
                             >
                                 <v-row align="center">
                                     <v-col cols="12" sm="4">
@@ -34,6 +34,7 @@
                                                 <v-col cols="12">
                                                     <span class="display-1"
                                                         >Tejero Medical
+                                                        <br>
                                                         Maternity Clinic</span
                                                     >
                                                 </v-col>

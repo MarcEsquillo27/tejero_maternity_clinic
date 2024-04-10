@@ -273,4 +273,17 @@ class UserController extends Controller
         }
  
     }
+    public function deleteFileDatabase(Request $request)
+    {
+        try {
+            \DB::connection('mysql')->table('files')
+                ->where('id', $request->id)
+                ->delete();
+    
+            return response()->json(['message' => 'Files deleted successfully'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => 'Error deleting files', 'details' => $th->getMessage()], 500);
+        }
+ 
+    }
 }

@@ -1,103 +1,73 @@
 <template>
-    <v-container fluid>
-      <h1>Transaction Logs</h1>
-      <v-row>
-        <v-col cols="6" sm="6">
-          <v-text-field v-model="search" outlined color="primary" dense label="Search" />
-        </v-col>
-        <v-col>
-          <v-menu
-        v-model="startdateMenu"
-        :close-on-content-click="false"
-        :nudge-right="40"
-        transition="scale-transition"
-        offset-y
-        min-width="auto"
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <v-text-field
-            outlined
-            dense
-            v-model="startDate"
-            label="Start Date"
-            prepend-icon="mdi-calendar"
-            readonly
-            v-bind="attrs"
-            v-on="on"
-          ></v-text-field>
-        </template>
-        <v-date-picker
-          v-model="startDate"
-          @input="startdateMenu = false"
-        ></v-date-picker>
-      </v-menu>
-        </v-col>
-        <v-col>
-          <v-menu
-        v-model="enddateMenu"
-        :close-on-content-click="false"
-        :nudge-right="40"
-        transition="scale-transition"
-        offset-y
-        min-width="auto"
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <v-text-field
-            outlined
-            dense
-            v-model="endDate"
-            label="End Date"
-            prepend-icon="mdi-calendar"
-            readonly
-            v-bind="attrs"
-            v-on="on"
-          ></v-text-field>
-        </template>
-        <v-date-picker
-          v-model="endDate"
-          @input="enddateMenu = false"
-        ></v-date-picker>
-      </v-menu>
-        </v-col>
-        <v-col>
-          <v-btn color="primary" @click="filterLog()">Filter Date</v-btn>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12">
-              <v-simple-table class="border" dense>
-                <thead>
-                  <tr>
-                    <th v-for="(items, index) in headers" :key="index">
-                      {{ items.text }}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    :style="
-                      items.stock <= 5 ? 'background-color:#CE4257;color:white;' : ''
-                    "
-                    v-for="(items, index) in caseDataSearch"
-                    :key="index"
-                  >
-                    <td>{{ items.id }}</td>
-                    <td>{{ items.action }}</td>
-                    <td>{{ items.description }}</td>
-                    <td>{{ items.name }}</td>
-                    <td>{{ items.position }}</td>
-                    <td>{{ items.drawerLink }}</td>
-                    <td>{{fixedDate(items.date )}}</td>
-                  </tr>
-                </tbody>
-              </v-simple-table>
-           
-        </v-col>
-      </v-row>
-      <v-row><v-col>
-        <v-pagination v-model="currentPage" :length="numPages" @input="changePage" />
-      </v-col></v-row>
-    </v-container>
+  <v-container fluid>
+    <h1>Transaction Logs</h1>
+    <v-row>
+      <v-col cols="12" sm="6">
+        <v-text-field v-model="search" outlined color="primary" dense label="Search" />
+      </v-col>
+      <v-col cols="12" sm="3">
+        <v-menu
+          v-model="startdateMenu"
+          :close-on-content-click="false"
+          :nudge-right="40"
+          transition="scale-transition"
+          offset-y
+          min-width="auto"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              outlined
+              dense
+              v-model="startDate"
+              label="Start Date"
+              prepend-icon="mdi-calendar"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+            ></v-text-field>
+          </template>
+          <v-date-picker v-model="startDate" @input="startdateMenu = false"></v-date-picker>
+        </v-menu>
+      </v-col>
+      <v-col cols="12" sm="3">
+        <v-menu
+          v-model="enddateMenu"
+          :close-on-content-click="false"
+          :nudge-right="40"
+          transition="scale-transition"
+          offset-y
+          min-width="auto"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              outlined
+              dense
+              v-model="endDate"
+              label="End Date"
+              prepend-icon="mdi-calendar"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+            ></v-text-field>
+          </template>
+          <v-date-picker v-model="endDate" @input="enddateMenu = false"></v-date-picker>
+        </v-menu>
+      </v-col>
+      <v-col cols="12" sm="12" md="3">
+        <v-btn color="primary" @click="filterLog()">Filter Date</v-btn>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="12">
+        <v-data-table :search="search" :headers="headers" :items="all_products" class="border" dense>
+          <!-- Table headers -->
+        </v-data-table>
+      </v-col>
+    </v-row>
+
+
+  </v-container>
 </template>
 
 <script>
@@ -128,27 +98,27 @@ export default {
         { text: "ID", value: "id" },
         { text: "Action ", value: "action" },
         { text: "Description ", value: "description" },
-        { text: "Name", value: "product_number" },
-        { text: "Access / Position", value: "quantity" },
+        { text: "Name", value: "name" },
+        { text: "Access / Position", value: "position" },
         { text: "Drawer Link", value: "drawerLink" },
-        { text: "Date", value: "date" },
+        { text: "Date", value: "created_at" },
       ],
     };
   },
   computed:{ 
-    caseDataSearch() {
-      const newSearch = this.search.toLowerCase();
-      return this.paginatedItems.filter(item => {
-        return (
-          item.drawerLink.toLowerCase().includes(newSearch) ||
-          item.position.toLowerCase().includes(newSearch) ||
-          item.name.toLowerCase().includes(newSearch) ||
-          item.description.toLowerCase().includes(newSearch)||
-          item.action.toLowerCase().includes(newSearch)
-          // Add more fields to search if needed
-        );
-      });
-    },
+    // caseDataSearch() {
+    //   const newSearch = this.search.toLowerCase();
+    //   return this.paginatedItems.filter(item => {
+    //     return (
+    //       item.drawerLink.toLowerCase().includes(newSearch) ||
+    //       item.position.toLowerCase().includes(newSearch) ||
+    //       item.name.toLowerCase().includes(newSearch) ||
+    //       item.description.toLowerCase().includes(newSearch)||
+    //       item.action.toLowerCase().includes(newSearch)
+    //       // Add more fields to search if needed
+    //     );
+    //   });
+    // },
     paginatedItems() {
       const startIndex = (this.currentPage - 1) * this.itemsPerPage;
       const endIndex = startIndex + this.itemsPerPage;

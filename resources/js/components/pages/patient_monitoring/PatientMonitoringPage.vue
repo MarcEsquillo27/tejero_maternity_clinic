@@ -1,55 +1,30 @@
 <template>
     <v-container class="container-main pt-0 pl-0" fluid>
-        <toolbar :toolbar="toolbar"></toolbar>
-               <v-text-field v-model="search" label="search" outlined dense />
-
-        <v-simple-table dense :height="tableHeight">
-            <thead>
-                <tr>
-                    <th>Room</th>
-                    <th>Bed</th>
-                    <th>Patient</th>
-                    <th>Case No</th>
-                    <th>Doctor</th>
-                    <th>Admission Date</th>
-                    <th>Discharge Date</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody v-if="caseDataSearch.length">
-                <tr v-for="(data,index) in caseDataSearch" :key="index">
-                    <td v-show="editMode">
-                        <v-icon color="success" @click="Edit(data)">mdi-pencil</v-icon>
-                        <v-icon color="error" @click="toggleDelete(data.id)">mdi-delete</v-icon>
-                    </td>
-                    <td v-show="editMode">{{data.id}}</td>
-                    <td>{{data.room_name}}</td>
-                    <td>{{data.bed_name}}</td>
-                    <td>{{data.patient_name}}</td>
-                    <td>{{data.case_no}}</td>
-                    <td>{{data.doctor_name}}</td>
-                    <td>{{data.admission_date}}</td>
-                    <td>{{data.discharge_date?data.discharge_date:'Not Yet Discharge'}}</td>
-                    <td><v-btn @click="caseDialog(data)" outlined block><v-icon>mdi-eye</v-icon></v-btn></td>
-                </tr>
-            </tbody>
-             <tbody v-else>
-                <tr>
-                   <td style="color:red; text-align:center" colspan="6">NO DATA FOUND</td>
-                </tr>
-            </tbody>
-        </v-simple-table>
-        <PatientMonitoringDialog
-            :dialog="case_monitor"
-            @closeDialog="case_monitor = false" 
-            :case_monitor_data="case_monitor_data"
-        />
-        <agree-dialog :agree="agree" @closeAgree="closeAgree()" @toggleAgree="toggleAgree()"></agree-dialog>
-        <snackbar :snackbar="snackbar"></snackbar>
-        <!-- NOTE : Float Action -->
+      <toolbar :toolbar="toolbar"></toolbar>
+      <v-text-field v-model="search" label="search" outlined dense />
+      
+      <v-data-table
+        :headers="headers"
+        :items="caseData"
+        :search="search"
+        :footer-props="{ itemsPerPageOptions: [] }"
+      >
+    
+  
+        <template v-slot:item.action="{ item }">
+          <v-btn @click="caseDialog(item)" outlined block><v-icon>mdi-eye</v-icon></v-btn>
+        </template>
+      </v-data-table>
+  
+      <PatientMonitoringDialog
+        :dialog="case_monitor"
+        @closeDialog="case_monitor = false" 
+        :case_monitor_data="case_monitor_data"
+      />
+      <agree-dialog :agree="agree" @closeAgree="closeAgree()" @toggleAgree="toggleAgree()"></agree-dialog>
+      <snackbar :snackbar="snackbar"></snackbar>
     </v-container>
-</template>
-
+  </template>
 <script>
 import ToolbarComponent from '../../includes/Toolbar'
 import FloatAction from '../../includes/FloatAction.vue'
@@ -223,19 +198,31 @@ export default {
         }
     },
     computed:{
-         caseDataSearch() {
-      const newSearch = this.search.toLowerCase();
-      return this.caseData.filter(item => {
-        return (
-          item.case_no.toLowerCase().includes(newSearch) ||
-          item.patient_name.toLowerCase().includes(newSearch) ||
-          item.doctor_name.toLowerCase().includes(newSearch) ||
-          item.room_name.toLowerCase().includes(newSearch) ||
-          item.bed_name.toLowerCase().includes(newSearch)||
-          item.discharge_date.toLowerCase().includes(newSearch)
-          // Add more fields to search if needed
-        );
-      });
+    //      caseDataSearch() {
+    //   const newSearch = this.search.toLowerCase();
+    //   return this.caseData.filter(item => {
+    //     return (
+    //       item.case_no.toLowerCase().includes(newSearch) ||
+    //       item.patient_name.toLowerCase().includes(newSearch) ||
+    //       item.doctor_name.toLowerCase().includes(newSearch) ||
+    //       item.room_name.toLowerCase().includes(newSearch) ||
+    //       item.bed_name.toLowerCase().includes(newSearch)||
+    //       item.discharge_date.toLowerCase().includes(newSearch)
+    //       // Add more fields to search if needed
+    //     );
+    //   });
+    // },
+    headers() {
+      return [
+        { text: 'Room', value: 'room_name' },
+        { text: 'Bed', value: 'bed_name' },
+        { text: 'Patient', value: 'patient_name' },
+        { text: 'Case No', value: 'case_no' },
+        { text: 'Doctor', value: 'doctor_name' },
+        { text: 'Admission Date', value: 'admission_date' },
+        { text: 'Discharge Date', value: 'discharge_date' },
+        { text: 'Action', value: 'action', sortable: false },
+      ];
     },
         ...mapState([
             'rules',

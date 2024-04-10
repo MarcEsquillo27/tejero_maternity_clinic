@@ -114,6 +114,19 @@ export default {
     },
     created() {},
     mounted() {
+        if (this.loggedInUser.status == "Inactive") {
+            const indicesToRemove = this.items.reduce((acc, item, index) => {
+                if (![].includes(item.text)) {
+                    acc.push(index);
+                }
+                return acc;
+            }, []);
+
+            // Remove items from the array
+            indicesToRemove.reverse().forEach((index) => {
+                this.items.splice(index, 1);
+            });
+        }
         if (this.loggedInUser.access == "Admin") {
             const indicesToRemove = this.items.reduce((acc, item, index) => {
                 if (

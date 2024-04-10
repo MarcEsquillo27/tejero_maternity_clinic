@@ -1,89 +1,60 @@
 <template>
     <v-container class="container-main pt-0 pl-0" fluid>
-        <toolbar :toolbar="toolbar"></toolbar>
-        <v-row>
-            <v-col>
-        <v-text-field v-model="search" label="search" outlined dense />
-
-            </v-col>
-            <v-col>
-        <v-btn color="success" dense @click="toggleInsertDialog($event)">Add</v-btn>
-
-            </v-col>
-        </v-row>
-
-        <v-simple-table dense :height="tableHeight">
-            <thead>
-                <tr>
-                    <th class="text-left" style="width:20px">ID</th> 
-                    <th>Name</th>
-                    <th>Sex</th>
-                    <th>Weight</th>
-                    <th>Age</th>
-                    <th>BirthDay</th>
-                    <th>BirthPlace</th>
-                    <th>Address</th>
-                    <th>Religion</th>
-                    <th>Nationality</th>
-                    <th>Occupation</th>
-                    <th>Civil Status</th>
-                    <th>Contact</th>
-                    <th>Action</th> 
-                </tr>
-            </thead>
-            <tbody v-if="searchPatient.length" >
-                <tr v-for="(item,index) in searchPatient" :key="index">
-       
-                    <td>{{item.id}}</td>
-                    <td>{{item.name}}</td>
-                    <td>{{selectSex[item.sex_id - 1].name}}</td>
-                    <td>{{item.weight}}</td>
-                    <td>{{item.age}}</td>
-                    <td>{{item.birthday}}</td>
-                    <td>{{item.birth_place}}</td>
-                    <td>{{item.address_txt}}</td>
-                    <td>{{item.religion_name}}</td>
-                    <td>{{item.nationality}}</td>
-                    <td>{{item.occupation}}</td>
-                    <td>{{selectCivil[item.civil_status_id - 1].name}}</td>
-                    <td>{{item.contact_no}}</td>
-                     <td >
-                        <v-icon color="success" @click="Edit(item)">mdi-pencil</v-icon>
-                        <v-icon color="error" @click="toggleDelete(item.id)">mdi-delete</v-icon>
-                    </td>
-                </tr>
-                
-            </tbody>
-            <tbody v-else>
-                <tr>
-                   <td style="color:red;" colspan="14">NO DATA FOUND</td>
-                </tr>
-            </tbody>
-        </v-simple-table>
-
-        <v-overlay :value="loadMore" overlay>
-            <v-progress-circular indeterminate size="64"></v-progress-circular>
-        </v-overlay>
-        <!-- NOTE: insert Dialog -->
-        
-        <insert-dialog :patient="tempPatient" :dialog="insertDialog" :dialogSetting="insertDialogSetting" @closeDialog="insertDialog = false" @toggleSave="Insert()"></insert-dialog>
-        
-        <edit-dialog :patient="tempEditPatient" :dialog="editDialog" :dialogSetting="editDialogSetting" @closeDialog="editDialog = false" @toggleSave="Update()"></edit-dialog>
-
-        <agree-dialog :agree="agree" @closeAgree="closeAgree()" @toggleAgree="Delete()"></agree-dialog>
-        <snackbar :snackbar="snackbar"></snackbar>
-        <!-- NOTE : Float Action -->
-        <float-action 
+      <toolbar :toolbar="toolbar"></toolbar>
+      <v-row>
+        <v-col cols="6">
+          <v-text-field v-model="search" label="search" outlined dense />
+        </v-col>
+        <v-col cols="6">
+          <v-btn color="success" dense @click="toggleInsertDialog($event)">Add</v-btn>
+        </v-col>
+      </v-row>
+  
+      <v-data-table
+        :headers="headers"
+        :items="patientData"
+        :search="search"
+        :items-per-page="10"
+        class="elevation-1"
+      >
+        <template v-slot:item.action="{ item }">
+          <v-icon color="success" @click="Edit(item)">mdi-pencil</v-icon>
+          <v-icon color="error" @click="toggleDelete(item.id)">mdi-delete</v-icon>
+        </template>
+        <template v-slot:item.civil_status="{ item }">
+    <td>
+      {{ item.civil_status_id === 1 ? 'Single' : (item.civil_status_id === 2 ? 'Married' : 'Widow') }}
+    </td>
+  </template>
+  <template v-slot:item.sex="{ item }">
+    <td>
+      {{ item.sex_id === 1 ? 'Female' : 'Male'}}
+    </td>
+  </template>
+      </v-data-table>
+  
+      <v-overlay :value="loadMore" overlay>
+        <v-progress-circular indeterminate size="64"></v-progress-circular>
+      </v-overlay>
+  
+      <insert-dialog :patient="tempPatient" :dialog="insertDialog" :dialogSetting="insertDialogSetting" @closeDialog="insertDialog = false" @toggleSave="Insert()"></insert-dialog>
+  
+      <edit-dialog :patient="tempEditPatient" :dialog="editDialog" :dialogSetting="editDialogSetting" @closeDialog="editDialog = false" @toggleSave="Update()"></edit-dialog>
+  
+      <agree-dialog :agree="agree" @closeAgree="closeAgree()" @toggleAgree="Delete()"></agree-dialog>
+      <snackbar :snackbar="snackbar"></snackbar>
+      <!-- NOTE : Float Action -->
+      <float-action
         @toggleInsertDialog="toggleInsertDialog($event)"
         @toggleDelete="toggleDelete"
         @toggleEditMode="toggleEditMode(editMode)"
         :floatbtn="floatbtn"
         :editMode="editMode"
         :selectedRowsCnt="selectedRows.length"
-        ></float-action>
+      ></float-action>
     </v-container>
-</template>
-<script>
+  </template>
+  <script>
 import ToolbarComponent from '../../includes/Toolbar'
 // import FloatAction from '../../includes/FloatAction.vue'
 import PatientDialog from './PatientDialog.vue'
@@ -157,7 +128,23 @@ export default {
                 barangay_id:null,
                 house_address:null,
             },
-            tempEditPatient:{}
+            tempEditPatient:{},
+            headers: [
+        { text: "ID", value: "id" },
+        { text: "Name", value: "name" },
+        { text: "Sex", value: "sex" },
+        { text: "Weight", value: "weight" },
+        { text: "Age", value: "age" },
+        { text: "BirthDay", value: "birthday" },
+        { text: "BirthPlace", value: "birth_place" },
+        { text: "Address", value: "address_txt" },
+        { text: "Religion", value: "religion_name" },
+        { text: "Nationality", value: "nationality" },
+        { text: "Occupation", value: "occupation" },
+        { text: "Civil Status", value: "civil_status" },
+        { text: "Contact", value: "contact_no" },
+        { text: "Action", value: "action", sortable: false },
+      ],
 
         }
     },
@@ -278,17 +265,17 @@ export default {
         },
     },
     computed:{
-        searchPatient() {
-      const newSearch = this.search.toLowerCase();
-      return this.patientData.filter(item => {
-        return (
-          item.name.toLowerCase().includes(newSearch) ||
-          item.address_txt.toLowerCase().includes(newSearch) ||
-          item.contact_no.toLowerCase().includes(newSearch)
-          // Add more fields to search if needed
-        );
-      });
-    },
+    //     searchPatient() {
+    //   const newSearch = this.search.toLowerCase();
+    //   return this.patientData.filter(item => {
+    //     return (
+    //       item.name.toLowerCase().includes(newSearch) ||
+    //       item.address_txt.toLowerCase().includes(newSearch) ||
+    //       item.contact_no.toLowerCase().includes(newSearch)
+    //       // Add more fields to search if needed
+    //     );
+    //   });
+    // },
         ...mapState([
             'rules',
             'provinceMaster',
