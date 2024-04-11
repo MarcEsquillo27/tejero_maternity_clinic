@@ -26,7 +26,7 @@ import file from "./components/pages/file.vue";
 
 export default new VueRouter({
     mode: "history",
-    base: "/clinic_system/",
+    base: "/",
     routes: [
         // NOTE: LOGIN
 

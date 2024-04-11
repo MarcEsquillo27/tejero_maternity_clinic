@@ -1364,15 +1364,15 @@
 									<ul class="sub-menu">
 										<li id="menu-item-889"
 											class="menu-item menu-item-type-custom menu-item-object-custom menu-item-889">
-											<a id="dir_about" href="http://localhost/clinic_system/about#flowchat">FLOWCHAT</a>
+											<a id="dir_about" href="#flowchat">FLOWCHAT</a>
 										</li>
 										<li id="menu-item-893"
 											class="menu-item menu-item-type-custom menu-item-object-customn menu-item-893">
-											<a id="dir_about" href="http://localhost/clinic_system/about#mission">MISSION</a>
+											<a id="dir_about" href="#mission">MISSION</a>
 										</li>
 										<li id="menu-item-897"
 											class="menu-item menu-item-type-custom menu-item-object-custom menu-item-897">
-											<a id="dir_about" href="http://localhost/clinic_system/about#vision">VISION</a>
+											<a id="dir_about" href="#vision">VISION</a>
 										</li>
 									</ul>
 								</li>
@@ -1381,7 +1381,7 @@
 									<a id="dir_login" href="#">LOGIN</a>
 								<script type="text/javascript">
 										
-										const dir_url = `${window.location.protocol}//${window.location.host}/clinic_system`
+										const dir_url = `${window.location.protocol}//${window.location.host}`
 									function returnLogin2(){
 										var a = document.getElementById("dir_login");//LOGIN
 										console.log(a,"37")
@@ -1545,7 +1545,7 @@
 						</div>
 					</div>
 				</div>
-				<a href="http://localhost/clinic_system/about" class="sm-up-container" style="display: none;"><i
+				<a href="" class="sm-up-container" style="display: none;"><i
 						class="fa fa-angle-up sm-up"></i></a>
 			</div>
 		</footer>

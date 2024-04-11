@@ -7,7 +7,7 @@ window._ = require('lodash');
  */
 window.moment = require('moment');
 window.axios = require('axios');
-window.base_dir = `${window.location.protocol}//${window.location.host}/clinic_system`
+window.base_dir = `${window.location.protocol}//${window.location.host}`
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /**
