@@ -19,7 +19,6 @@ mix.js('resources/js/app.js', 'public/js')
 
 mix.webpackConfig({
     output: {
-        publicPath: '/clinic_system/',
         chunkFilename: 'js/chunks/[name].js',
     },
 });
